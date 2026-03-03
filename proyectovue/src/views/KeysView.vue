@@ -1,16 +1,25 @@
 <template>
-  <div class="page-container">
-    <h1>Uso correcto de v-bind:key</h1>
-    <p>Vue necesita una clave única (key) para rastrear cada nodo y reutilizar elementos eficientemente al modificar la lista.</p>
+  <div>
+    <div class="header-action">
+      <h2>Gestión de Usuarios</h2>
+      <button @click="agregarUsuario" class="btn-add">+ Nuevo Usuario</button>
+    </div>
+    
+    <p>Observa cómo al agregar usuarios, Vue usa el <code>:key</code> para saber cuál es nuevo.</p>
 
-    <button @click="agregarUsuario">Agregar Usuario</button>
-
-    <ul>
-      <!-- Aquí aplicamos v-bind:key (sintaxis corta :key) -->
-      <li v-for="usuario in usuarios" :key="usuario.id">
-        ID: {{ usuario.id }} - Nombre: {{ usuario.nombre }}
-      </li>
-    </ul>
+    <div class="user-list">
+      <div v-for="user in usuarios" :key="user.id" class="user-row">
+        <div class="avatar">{{ user.nombre.charAt(0) }}</div>
+        <div class="user-info">
+          <strong>{{ user.nombre }}</strong>
+          <small>ID Único: {{ user.id }}</small>
+        </div>
+      </div>
+      
+      <div v-if="usuarios.length === 0" class="empty-state">
+        No hay usuarios registrados.
+      </div>
+    </div>
   </div>
 </template>
 
@@ -19,21 +28,72 @@ export default {
   data() {
     return {
       usuarios: [
-        { id: 1, nombre: 'Ana' },
-        { id: 2, nombre: 'Carlos' }
+        { id: 101, nombre: 'Ana García' },
+        { id: 102, nombre: 'Carlos Ruiz' },
+        { id: 103, nombre: 'Lucía Méndez' }
       ],
-      contador: 3
+      nextId: 104
     }
   },
   methods: {
     agregarUsuario() {
-      this.usuarios.push({ id: this.contador++, nombre: 'Nuevo Usuario' });
+      this.usuarios.push({ 
+        id: this.nextId++, 
+        nombre: `Usuario ${this.nextId - 1}` 
+      });
     }
   }
 }
 </script>
 
 <style scoped>
-.page-container { padding: 20px; }
-button { background: purple; color: white; padding: 10px; border: none; cursor: pointer; }
+.header-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.btn-add {
+  background-color: var(--dark);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.btn-add:hover { background-color: black; }
+
+.user-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.user-row {
+  display: flex;
+  align-items: center;
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 5px solid var(--primary);
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  background: var(--primary);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 15px;
+}
+
+.user-info { display: flex; flex-direction: column; }
+.user-info small { color: #888; font-size: 0.85rem; }
+.empty-state { text-align: center; color: #999; padding: 20px; }
 </style>
