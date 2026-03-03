@@ -40,7 +40,7 @@
         <p v-else-if="nivel === 2">Ya dominas las bases. ¡Sigue practicando para llegar al siguiente nivel!</p>
         
         <h3 v-else>🏆 Nivel Experto</h3>
-        <p v-else>¡Felicidades! Has dominado las directivas condicionales de Vue.js.</p>
+        <p>¡Felicidades! Has dominado las directivas condicionales de Vue.js</p>
         
         <div class="status-badge" :class="badgeClass">{{ statusText }}</div>
       </div>

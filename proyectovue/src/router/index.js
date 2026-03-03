@@ -5,7 +5,7 @@ import ListView from '../views/ListView.vue'
 import KeysView from '../views/KeysView.vue'
 
 const routes = [
-  { path: '/', component: ConditionalView }, // Página principal
+  { path: '/', component: ConditionalView },
   { path: '/v-show', component: VisibilityView },
   { path: '/v-for', component: ListView },
   { path: '/keys', component: KeysView }

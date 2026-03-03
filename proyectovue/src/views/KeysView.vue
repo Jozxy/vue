@@ -10,8 +10,8 @@
       <ul>
         <li><code>:key</code>: Identificador único para cada elemento</li>
         <li>Permite a Vue optimizar el renderizado</li>
-        <li>Evita bugs al modificar listas (agregar/eliminar/ordenar)</li>
-        <li><strong>Mejor práctica:</strong> Usar IDs únicos, no el índice del array</li>
+        <li>Evita bugs al modificar listas (agregar/eliminar)</li>
+        <li><strong>Mejor práctica:</strong> Usar IDs únicos, no el índice</li>
       </ul>
     </div>
 
@@ -23,7 +23,7 @@
         </button>
       </div>
       
-      <p>Cada usuario tiene un <code>ID único</code> que se usa como <code>:key</code> para que Vue pueda rastrearlos eficientemente:</p>
+      <p>Cada usuario tiene un <code>ID único</code> que se usa como <code>:key</code>:</p>
 
       <div class="stats-row">
         <div class="stat-card">
@@ -40,13 +40,6 @@
             <span class="stat-label">Último ID</span>
           </div>
         </div>
-        <div class="stat-card">
-          <span class="stat-icon">🔄</span>
-          <div class="stat-content">
-            <span class="stat-value">{{ contadorCambios }}</span>
-            <span class="stat-label">Cambios</span>
-          </div>
-        </div>
       </div>
 
       <div class="users-list">
@@ -54,7 +47,6 @@
           v-for="user in usuarios" 
           :key="user.id" 
           class="user-card"
-          :class="{ 'new-user': user.esNuevo }"
         >
           <div class="user-avatar" :style="{ background: user.color }">
             {{ user.nombre.charAt(0).toUpperCase() }}
@@ -73,7 +65,7 @@
             </div>
           </div>
           <div class="user-actions">
-            <button @click="eliminarUsuario(user.id)" class="btn-delete">
+            <button @click="eliminarUsuario(user.id)" class="btn-delete" title="Eliminar">
               🗑️
             </button>
           </div>
@@ -91,27 +83,8 @@
           🧹 Limpiar Todo
         </button>
         <button @click="resetearDemo" class="btn-outline">
-          🔄 Resetear Demo
+          🔄 Resetear
         </button>
-      </div>
-    </section>
-
-    <section class="code-section">
-      <h2>💻 Estructura del Código</h2>
-      <div class="code-block">
-        <pre><code>&lt;div v-for="user in usuarios" :key="user.id"&gt;
-  &lt;h4&gt;{{ user.nombre }}&lt;/h4&gt;
-  &lt;span&gt;ID: {{ user.id }}&lt;/span&gt;
-&lt;/div&gt;</code></pre>
-      </div>
-      <div class="key-explanation">
-        <h4>⚠️ ¿Por qué usar :key?</h4>
-        <p>Sin <code>:key</code>, Vue usa el orden de los elementos para identificarlos. Cuando la lista cambia, esto puede causar:</p>
-        <ul>
-          <li>❌ Renderizado incorrecto</li>
-          <li>❌ Pérdida de estado local</li>
-          <li>❌ Bugs difíciles de detectar</li>
-        </ul>
       </div>
     </section>
   </div>
@@ -122,13 +95,12 @@ export default {
   data() {
     return {
       usuarios: [
-        { id: 1, nombre: 'Ana García', color: '#fd79a8', fecha: '2024-01-15', esNuevo: false },
-        { id: 2, nombre: 'Carlos Ruiz', color: '#6c5ce7', fecha: '2024-01-16', esNuevo: false },
-        { id: 3, nombre: 'Lucía Méndez', color: '#00b894', fecha: '2024-01-17', esNuevo: false },
-        { id: 4, nombre: 'David López', color: '#fdcb6e', fecha: '2024-01-18', esNuevo: false }
+        { id: 1, nombre: 'Ana García', color: '#fd79a8', fecha: '2024-01-15' },
+        { id: 2, nombre: 'Carlos Ruiz', color: '#6c5ce7', fecha: '2024-01-16' },
+        { id: 3, nombre: 'Lucía Méndez', color: '#00b894', fecha: '2024-01-17' },
+        { id: 4, nombre: 'David López', color: '#fdcb6e', fecha: '2024-01-18' }
       ],
-      nextId: 5,
-      contadorCambios: 0
+      nextId: 5
     }
   },
   computed: {
@@ -147,33 +119,27 @@ export default {
         id: this.nextId++,
         nombre: `${nombreAleatorio} ${this.nextId - 1}`,
         color: colorAleatorio,
-        fecha: new Date().toISOString().split('T')[0],
-        esNuevo: true
+        fecha: new Date().toISOString().split('T')[0]
       });
-      this.contadorCambios++;
-      
-      setTimeout(() => {
-        const ultimo = this.usuarios[this.usuarios.length - 1];
-        if (ultimo) ultimo.esNuevo = false;
-      }, 2000);
     },
     eliminarUsuario(id) {
-      this.usuarios = this.usuarios.filter(u => u.id !== id);
-      this.contadorCambios++;
+      if (confirm('¿Estás seguro de eliminar este usuario?')) {
+        this.usuarios = this.usuarios.filter(u => u.id !== id);
+      }
     },
     limpiarTodos() {
-      this.usuarios = [];
-      this.contadorCambios++;
+      if (confirm('¿Estás seguro de eliminar TODOS los usuarios?')) {
+        this.usuarios = [];
+      }
     },
     resetearDemo() {
       this.usuarios = [
-        { id: 1, nombre: 'Ana García', color: '#fd79a8', fecha: '2024-01-15', esNuevo: false },
-        { id: 2, nombre: 'Carlos Ruiz', color: '#6c5ce7', fecha: '2024-01-16', esNuevo: false },
-        { id: 3, nombre: 'Lucía Méndez', color: '#00b894', fecha: '2024-01-17', esNuevo: false },
-        { id: 4, nombre: 'David López', color: '#fdcb6e', fecha: '2024-01-18', esNuevo: false }
+        { id: 1, nombre: 'Ana García', color: '#fd79a8', fecha: '2024-01-15' },
+        { id: 2, nombre: 'Carlos Ruiz', color: '#6c5ce7', fecha: '2024-01-16' },
+        { id: 3, nombre: 'Lucía Méndez', color: '#00b894', fecha: '2024-01-17' },
+        { id: 4, nombre: 'David López', color: '#fdcb6e', fecha: '2024-01-18' }
       ];
       this.nextId = 5;
-      this.contadorCambios = 0;
     }
   }
 }
@@ -190,6 +156,7 @@ export default {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  margin-bottom: 10px;
 }
 
 .demo-section {
@@ -205,18 +172,22 @@ export default {
   margin-bottom: 20px;
 }
 
+.panel-header h2 {
+  margin: 0;
+}
+
 .btn-primary {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 12px 24px;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  background: linear-gradient(135deg, #42b983 0%, #359469 100%);
   color: white;
   border: none;
   border-radius: 50px;
   font-weight: 600;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
@@ -235,9 +206,9 @@ export default {
   display: flex;
   align-items: center;
   gap: 15px;
-  background: var(--light);
+  background: #f5f6fa;
   padding: 20px;
-  border-radius: var(--radius);
+  border-radius: 16px;
 }
 
 .stat-icon {
@@ -252,12 +223,12 @@ export default {
 .stat-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--dark);
+  color: #2d3436;
 }
 
 .stat-label {
   font-size: 0.75rem;
-  color: var(--gray);
+  color: #636e72;
   text-transform: uppercase;
 }
 
@@ -274,25 +245,15 @@ export default {
   gap: 20px;
   background: white;
   padding: 20px;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  border-left: 5px solid var(--primary);
-  transition: var(--transition);
-}
-
-.user-card.new-user {
-  animation: highlight 1s ease;
-  border-left-color: var(--accent);
-}
-
-@keyframes highlight {
-  0%, 100% { background: white; }
-  50% { background: #fff3e0; }
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  border-left: 5px solid #42b983;
+  transition: all 0.3s ease;
 }
 
 .user-card:hover {
   transform: translateX(5px);
-  box-shadow: var(--shadow-hover);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
 }
 
 .user-avatar {
@@ -314,8 +275,9 @@ export default {
 
 .user-name {
   font-size: 1.1rem;
-  color: var(--dark);
+  color: #2d3436;
   margin-bottom: 8px;
+  font-weight: 600;
 }
 
 .user-meta {
@@ -329,7 +291,7 @@ export default {
   align-items: center;
   gap: 6px;
   font-size: 0.85rem;
-  color: var(--gray);
+  color: #636e72;
 }
 
 .meta-icon {
@@ -348,11 +310,11 @@ export default {
   border-radius: 50%;
   cursor: pointer;
   font-size: 1.2rem;
-  transition: var(--transition);
+  transition: all 0.3s ease;
 }
 
 .btn-delete:hover {
-  background: var(--danger);
+  background: #ff7675;
   color: white;
   transform: scale(1.1);
 }
@@ -365,13 +327,13 @@ export default {
 
 .btn-secondary {
   padding: 12px 24px;
-  background: var(--light);
-  color: var(--dark);
+  background: #f5f6fa;
+  color: #2d3436;
   border: none;
   border-radius: 50px;
   font-weight: 600;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.3s ease;
 }
 
 .btn-secondary:hover:not(:disabled) {
@@ -386,25 +348,25 @@ export default {
 .btn-outline {
   padding: 12px 24px;
   background: transparent;
-  color: var(--dark);
-  border: 2px solid var(--dark);
+  color: #2d3436;
+  border: 2px solid #2d3436;
   border-radius: 50px;
   font-weight: 600;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.3s ease;
 }
 
 .btn-outline:hover {
-  background: var(--dark);
+  background: #2d3436;
   color: white;
 }
 
 .empty-state {
   text-align: center;
   padding: 60px 40px;
-  background: var(--light);
-  border-radius: var(--radius);
-  border: 2px dashed #ccc;
+  background: #f5f6fa;
+  border-radius: 16px;
+  border: 2px dashed #dfe6e9;
 }
 
 .empty-icon {
@@ -414,54 +376,11 @@ export default {
 }
 
 .empty-state h3 {
-  color: var(--dark);
+  color: #2d3436;
   margin-bottom: 10px;
 }
 
-.code-section {
-  margin-top: 50px;
-  padding-top: 40px;
-  border-top: 2px dashed #e0e0e0;
-}
-
-.code-block {
-  background: #2d3436;
-  border-radius: var(--radius);
-  padding: 25px;
-  overflow-x: auto;
-  margin-bottom: 25px;
-}
-
-.code-block pre {
-  margin: 0;
-}
-
-.code-block code {
-  color: #a8edea;
-  font-family: 'Fira Code', monospace;
-  font-size: 0.9rem;
-  background: none;
-  padding: 0;
-}
-
-.key-explanation {
-  background: #fff3cd;
-  border-left: 4px solid var(--warning);
-  padding: 25px;
-  border-radius: var(--radius);
-}
-
-.key-explanation h4 {
-  color: var(--dark);
-  margin-bottom: 15px;
-}
-
-.key-explanation ul {
-  margin-left: 20px;
-  color: var(--gray);
-}
-
-.key-explanation li {
-  margin-bottom: 8px;
+.empty-state p {
+  color: #636e72;
 }
 </style>

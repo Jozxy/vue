@@ -10,14 +10,13 @@
       <ul>
         <li><code>v-for="item in items"</code>: Itera sobre arrays</li>
         <li><code>v-for="(item, index) in items"</code>: Con índice</li>
-        <li><code>v-for="(value, key) in object"</code>: Para objetos</li>
         <li><strong>Importante:</strong> Siempre usa <code>:key</code> para mejor rendimiento</li>
       </ul>
     </div>
 
     <section class="demo-section">
       <h2>🛒 Catálogo de Productos</h2>
-      <p>Lista generada dinámicamente usando <code>v-for</code> sobre un array de objetos:</p>
+      <p>Lista generada dinámicamente usando <code>v-for</code>:</p>
       
       <div class="filter-tabs">
         <button 
@@ -42,10 +41,14 @@
             <p class="product-category">{{ producto.categoria }}</p>
             <div class="product-footer">
               <span class="product-price">${{ producto.precio.toFixed(2) }}</span>
-              <button class="add-btn">+</button>
+              <button class="add-btn" @click="agregarAlCarrito(producto)">+</button>
             </div>
           </div>
         </div>
+      </div>
+
+      <div v-if="productosFiltrados.length === 0" class="no-results">
+        <p>No hay productos en esta categoría.</p>
       </div>
 
       <div class="stats-bar">
@@ -58,19 +61,9 @@
           <span class="stat-label">Valor Total</span>
         </div>
         <div class="stat-item">
-          <span class="stat-number">{{ categoriasActivas }}</span>
-          <span class="stat-label">Categorías</span>
+          <span class="stat-number">{{ carrito }}</span>
+          <span class="stat-label">En Carrito</span>
         </div>
-      </div>
-    </section>
-
-    <section class="code-section">
-      <h2>💻 Estructura del Código</h2>
-      <div class="code-block">
-        <pre><code>&lt;div v-for="producto in productos" :key="producto.id"&gt;
-  &lt;h4&gt;{{ producto.nombre }}&lt;/h4&gt;
-  &lt;span&gt;${{ producto.precio }}&lt;/span&gt;
-&lt;/div&gt;</code></pre>
       </div>
     </section>
   </div>
@@ -81,6 +74,7 @@ export default {
   data() {
     return {
       filtroActual: 'todos',
+      carrito: 0,
       categories: [
         { id: 'todos', name: 'Todos', icon: '📦' },
         { id: 'frutas', name: 'Frutas', icon: '🍎' },
@@ -110,9 +104,12 @@ export default {
     },
     totalPrecio() {
       return this.productosFiltrados.reduce((sum, p) => sum + p.precio, 0).toFixed(2)
-    },
-    categoriasActivas() {
-      return new Set(this.productosFiltrados.map(p => p.categoria)).size
+    }
+  },
+  methods: {
+    agregarAlCarrito(producto) {
+      this.carrito++
+      alert(`¡${producto.nombre} agregado al carrito! 🛒`)
     }
   }
 }
@@ -129,6 +126,7 @@ export default {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  margin-bottom: 10px;
 }
 
 .demo-section {
@@ -154,17 +152,17 @@ export default {
   cursor: pointer;
   font-weight: 600;
   font-size: 0.9rem;
-  transition: var(--transition);
+  transition: all 0.3s ease;
 }
 
 .filter-btn:hover {
-  border-color: var(--primary);
+  border-color: #42b983;
   transform: translateY(-2px);
 }
 
 .filter-btn.active {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-  border-color: var(--primary);
+  background: linear-gradient(135deg, #42b983 0%, #359469 100%);
+  border-color: #42b983;
   color: white;
   box-shadow: 0 4px 15px rgba(66, 185, 131, 0.4);
 }
@@ -178,16 +176,16 @@ export default {
 
 .product-card {
   background: white;
-  border-radius: var(--radius);
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: var(--shadow);
-  transition: var(--transition);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
   border: 1px solid #f0f0f0;
 }
 
 .product-card:hover {
   transform: translateY(-8px);
-  box-shadow: var(--shadow-hover);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
 }
 
 .product-image {
@@ -205,13 +203,14 @@ export default {
 
 .product-name {
   font-size: 1.1rem;
-  color: var(--dark);
+  color: #2d3436;
   margin-bottom: 5px;
+  font-weight: 600;
 }
 
 .product-category {
   font-size: 0.8rem;
-  color: var(--gray);
+  color: #636e72;
   text-transform: capitalize;
   margin-bottom: 15px;
 }
@@ -225,7 +224,7 @@ export default {
 .product-price {
   font-size: 1.3rem;
   font-weight: 700;
-  color: var(--primary);
+  color: #42b983;
 }
 
 .add-btn {
@@ -233,11 +232,11 @@ export default {
   height: 35px;
   border: none;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  background: linear-gradient(135deg, #42b983 0%, #359469 100%);
   color: white;
   font-size: 1.2rem;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.3s ease;
 }
 
 .add-btn:hover {
@@ -245,12 +244,21 @@ export default {
   box-shadow: 0 4px 15px rgba(66, 185, 131, 0.4);
 }
 
+.no-results {
+  text-align: center;
+  padding: 40px;
+  background: #f5f6fa;
+  border-radius: 16px;
+  margin-bottom: 30px;
+  color: #636e72;
+}
+
 .stats-bar {
   display: flex;
   justify-content: space-around;
-  background: var(--light);
+  background: #f5f6fa;
   padding: 25px;
-  border-radius: var(--radius);
+  border-radius: 16px;
   flex-wrap: wrap;
   gap: 20px;
 }
@@ -263,7 +271,7 @@ export default {
   display: block;
   font-size: 1.8rem;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  background: linear-gradient(135deg, #42b983 0%, #6c5ce7 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -271,33 +279,8 @@ export default {
 
 .stat-label {
   font-size: 0.85rem;
-  color: var(--gray);
+  color: #636e72;
   text-transform: uppercase;
   letter-spacing: 1px;
-}
-
-.code-section {
-  margin-top: 50px;
-  padding-top: 40px;
-  border-top: 2px dashed #e0e0e0;
-}
-
-.code-block {
-  background: #2d3436;
-  border-radius: var(--radius);
-  padding: 25px;
-  overflow-x: auto;
-}
-
-.code-block pre {
-  margin: 0;
-}
-
-.code-block code {
-  color: #a8edea;
-  font-family: 'Fira Code', monospace;
-  font-size: 0.9rem;
-  background: none;
-  padding: 0;
 }
 </style>
